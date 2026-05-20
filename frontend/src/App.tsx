@@ -13,11 +13,12 @@ function App() {
         <Route path="/signin" element={<SignIn />} />
   
         {/* Redirect empty path to settings (or dashboard) */}
-       <Route path="/settings" element={<SettingsPage />} />
+       
        
 
         {/* Protected Routes (Dashboard Layout) */}
         <Route element={<DashboardLayout />}>
+               <Route path="/settings" element={<SettingsPage />} />
           
           <Route path="/exportdata" element={<ExportData />} />
         </Route>

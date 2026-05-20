@@ -2,6 +2,8 @@ import React from 'react';
 import { Outlet, NavLink } from 'react-router-dom';
 import "../global.css";
 
+
+
 const DashboardLayout: React.FC = () => {
   return (
     <div className="dashboard-wrapper">
