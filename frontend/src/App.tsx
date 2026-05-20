@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import SignIn from './Candidate/SignIn';
 import ExportData from './Candidate/ExportData';
+import CandidateDashboard from './Candidate/CandidateDashboard';
 import DashboardLayout from './components/DashboardLayout';
 import SettingsPage from './Candidate/Settings';
 import Reports from './Admin/Reports';
@@ -13,6 +14,7 @@ function App() {
       <Routes>
         {/* Public Routes */}
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
   
         {/* Redirect empty path to settings (or dashboard) */}
        
