@@ -6,6 +6,7 @@ import SalaryDonutChart from "../components/admin/SalaryDonutChart";
 import StatCard from "../components/admin/StatCard";
 import { experienceOptions, fieldOptions } from "../data/adminInsights";
 import { isDateRangeValid } from "../utils/dateRange";
+import '../index.css'
 
 type SalaryFilters = {
   field: string;

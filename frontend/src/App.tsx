@@ -17,12 +17,12 @@ function App() {
         <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
   
         {/* Redirect empty path to settings (or dashboard) */}
-       <Route path="/settings" element={<SettingsPage />} />
+       
        
 
         {/* Protected Routes (Dashboard Layout) */}
         <Route element={<DashboardLayout />}>
-          
+          <Route path="/settings" element={<SettingsPage />} />       
           <Route path="/exportdata" element={<ExportData />} />
           <Route path="/admin/reports" element={<Reports />} />
           <Route path="/admin/salary-insights" element={<SalaryInsights />} />
