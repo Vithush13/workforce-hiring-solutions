@@ -137,7 +137,7 @@ const SalaryInsights = () => {
   );
 
   return (
-    <div className="page-stack">
+    <div className="page-stack salary-insights-page">
       <div className="page-title-block">
         <h1>Salary Insights</h1>
         <p>Insights about salary ranges</p>
