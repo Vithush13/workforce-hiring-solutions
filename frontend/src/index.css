@@ -1,20 +1,100 @@
-.assigned-page,
-.assigned-page *,
-.assigned-page *::before,
-.assigned-page *::after {
+/* Base Typography - Applied to all pages */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+html {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  background: #f8fafd;
+}
+
+/* All page containers - consistent sans-serif typography */
+.assigned-page,
+.reports-page,
+.salary-page,
+.dashboard-page,
+.insights-page,
+.salary-insights-page,
+.reports-insights-page {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #18233b;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Universal inherit for all nested elements */
+.assigned-page *,
+.reports-page *,
+.salary-page *,
+.dashboard-page *,
+.insights-page *,
+.salary-insights-page *,
+.reports-insights-page *,
+.assigned-page *::before,
+.assigned-page *::after,
+.reports-page *::before,
+.reports-page *::after,
+.salary-page *::before,
+.salary-page *::after,
+.dashboard-page *::before,
+.dashboard-page *::after,
+.insights-page *::before,
+.insights-page *::after {
+  font-family: inherit;
+}
+
+/* Form elements inherit proper font */
 .assigned-page button,
 .assigned-page input,
-.assigned-page select {
+.assigned-page select,
+.assigned-page textarea,
+.reports-page button,
+.reports-page input,
+.reports-page select,
+.reports-page textarea,
+.salary-page button,
+.salary-page input,
+.salary-page select,
+.salary-page textarea,
+.dashboard-page button,
+.dashboard-page input,
+.dashboard-page select,
+.dashboard-page textarea,
+.insights-page button,
+.insights-page input,
+.insights-page select,
+.insights-page textarea {
   font: inherit;
 }
 
-.assigned-page button {
+/* Button cursor */
+.assigned-page button,
+.reports-page button,
+.salary-page button,
+.dashboard-page button,
+.insights-page button {
   cursor: pointer;
 }
 
+/* Icon styles */
 .reports-download-icon {
   display: inline-flex;
   align-items: center;
@@ -24,12 +104,12 @@
   color: #6e7b98;
 }
 
+/* Assigned Page Styles */
 .assigned-page {
   max-width: 1180px;
   margin: 0 auto;
   padding: 0;
   color: #18233b;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 .assigned-heading {
@@ -42,6 +122,7 @@
   font-size: 25px;
   font-weight: 800;
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
 .assigned-heading p {
@@ -77,6 +158,8 @@
   color: #6f7d96;
   font-size: 10px;
   font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .assigned-filter-control select,
@@ -143,6 +226,7 @@
   color: #ffffff;
   font-size: 12px;
   font-weight: 800;
+  letter-spacing: 0.02em;
   box-shadow: 0 8px 16px rgba(22, 103, 232, 0.18);
 }
 
@@ -158,6 +242,7 @@
   color: #22304d;
   font-size: 14px;
   font-weight: 900;
+  letter-spacing: -0.01em;
 }
 
 .assigned-table-wrap {
@@ -180,7 +265,9 @@
   color: #65738c;
   font-size: 11px;
   font-weight: 900;
+  letter-spacing: 0.03em;
   text-align: left;
+  text-transform: uppercase;
 }
 
 .assigned-table td {
@@ -188,6 +275,7 @@
   border-bottom: 1px solid #edf1f8;
 }
 
+/* Reports Summary Grid */
 .reports-summary-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -212,6 +300,8 @@
   color: #75829a;
   font-size: 11px;
   font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
 .reports-summary-card strong {
@@ -220,6 +310,7 @@
   color: #1b2945;
   font-size: 19px;
   font-weight: 900;
+  letter-spacing: -0.01em;
 }
 
 .reports-summary-icon {
@@ -251,6 +342,7 @@
   color: #9a63f5;
 }
 
+/* Reports List Cards */
 .reports-list-card,
 .reports-recent-card {
   padding: 18px 20px;
@@ -333,6 +425,7 @@
   color: #1f76dc;
 }
 
+/* Salary Insights Page */
 .salary-insights-page .assigned-heading {
   margin-bottom: 28px;
 }
@@ -364,8 +457,11 @@
   color: #6d7b94;
   font-size: 10px;
   font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
 
+/* Bar Chart */
 .salary-bar-chart-wrap {
   position: relative;
   min-height: 232px;
@@ -428,33 +524,14 @@
   font-weight: 800;
 }
 
-.salary-bar-height-96 {
-  height: 24px;
-}
-
-.salary-bar-height-248 {
-  height: 48px;
-}
-
-.salary-bar-height-412 {
-  height: 70px;
-}
-
-.salary-bar-height-568 {
-  height: 92px;
-}
-
-.salary-bar-height-676 {
-  height: 108px;
-}
-
-.salary-bar-height-312 {
-  height: 60px;
-}
-
-.salary-bar-height-148 {
-  height: 36px;
-}
+/* Bar height variants */
+.salary-bar-height-96 { height: 24px; }
+.salary-bar-height-248 { height: 48px; }
+.salary-bar-height-412 { height: 70px; }
+.salary-bar-height-568 { height: 92px; }
+.salary-bar-height-676 { height: 108px; }
+.salary-bar-height-312 { height: 60px; }
+.salary-bar-height-148 { height: 36px; }
 
 .salary-bar-label {
   width: 58px;
@@ -474,6 +551,7 @@
   text-align: center;
 }
 
+/* Overview Card */
 .salary-overview-card {
   display: flex;
   flex-direction: column;
@@ -496,6 +574,7 @@
   color: #75829a;
   font-size: 11px;
   font-weight: 800;
+  letter-spacing: 0.03em;
 }
 
 .salary-overview-row strong {
@@ -504,6 +583,7 @@
   font-weight: 900;
 }
 
+/* Donut Chart */
 .salary-donut-layout {
   display: grid;
   grid-template-columns: 205px minmax(0, 1fr);
@@ -561,45 +641,28 @@
   font-weight: 800;
 }
 
+/* Legend Dots */
 .salary-legend-dot {
   width: 9px;
   height: 9px;
   border-radius: 50%;
 }
 
-.salary-legend-dot.blue {
-  background: #1e7bff;
-}
+.salary-legend-dot.blue { background: #1e7bff; }
+.salary-legend-dot.indigo { background: #6b67f2; }
+.salary-legend-dot.green { background: #42bf78; }
+.salary-legend-dot.orange { background: #efaa2c; }
+.salary-legend-dot.coral { background: #ff8989; }
+.salary-legend-dot.purple { background: #a779e8; }
+.salary-legend-dot.pink { background: #f57ab8; }
 
-.salary-legend-dot.indigo {
-  background: #6b67f2;
-}
-
-.salary-legend-dot.green {
-  background: #42bf78;
-}
-
-.salary-legend-dot.orange {
-  background: #efaa2c;
-}
-
-.salary-legend-dot.coral {
-  background: #ff8989;
-}
-
-.salary-legend-dot.purple {
-  background: #a779e8;
-}
-
-.salary-legend-dot.pink {
-  background: #f57ab8;
-}
-
+/* Table Styles */
 .salary-range-table th,
 .salary-range-table td {
   padding: 16px 18px;
 }
 
+/* Responsive Design */
 @media (max-width: 1060px) {
   .reports-filter-panel,
   .salary-filter-panel,
@@ -650,4 +713,50 @@
   .salary-donut-chart {
     margin: 0 auto;
   }
+}
+
+/* Utility Classes */
+.text-sans {
+  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.text-normal {
+  font-weight: 400;
+}
+
+.text-medium {
+  font-weight: 500;
+}
+
+.text-semibold {
+  font-weight: 600;
+}
+
+.text-bold {
+  font-weight: 700;
+}
+
+.text-extrabold {
+  font-weight: 800;
+}
+
+.text-black {
+  font-weight: 900;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  outline: 2px solid #1667e8;
+  outline-offset: 2px;
+}
+
+/* Selection color */
+::selection {
+  background: #1667e8;
+  color: #ffffff;
 }

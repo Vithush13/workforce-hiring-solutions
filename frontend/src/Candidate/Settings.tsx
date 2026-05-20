@@ -293,13 +293,12 @@ const SettingsPage: React.FC = () => {
   return (
     <div className="settings-page">
       <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} isSidebarOpen={isSidebarOpen} />
-
-      <div className="settings-layout">
-        <aside className={`settings-sidebar ${!isSidebarOpen ? 'sidebar-collapsed' : ''}`}>
-          <div className="sidebar-header">
+       <div className="sidebar-header">
             <h1>Settings</h1>
             <p>Application settings and preferences</p>
           </div>
+      <div className="settings-layout">
+        <aside className={`settings-sidebar ${!isSidebarOpen ? 'sidebar-collapsed' : ''}`}>
           <nav className="sidebar-nav">
             {menuItems.map((item) => (
               <MenuItem
