@@ -3,8 +3,8 @@ import { FiCheckCircle, FiMail, FiUser, FiFileText, FiDatabase, FiHeadphones, Fi
 
 export default function ProfileCreated() {
   return (
-    <div className="flex h-screen w-full bg-[#f8f9fc] font-sans overflow-hidden">
-      {/* Sidebar */}
+    <div className="flex h-screen w-full bg-[#f8f9fc] font-sans">
+      {/* Sidebar - වම් පස කොටස */}
       <aside className="w-[30%] bg-gradient-to-br from-[#0b5d90] to-[#39a75f] text-white p-10 flex flex-col justify-between">
         <div className="font-bold tracking-widest text-sm">WORKFORCE HIRING SOLUTIONS</div>
         <div>
@@ -14,10 +14,9 @@ export default function ProfileCreated() {
             🔒 Your information is safe, secure and will never be shared publicly.
           </div>
         </div>
-        <div className="opacity-0">Placeholder</div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main Content - දකුණු පස කොටස (ඔබ ඉල්ලූ පරිදි) */}
       <main className="w-[70%] p-10 flex flex-col gap-6 overflow-y-auto">
         <div className="flex justify-end items-center text-sm text-gray-500 gap-2">
           <FiHeadphones /> Need Help? <span className="font-semibold text-gray-800">support@workforcehs.com</span>
@@ -34,13 +33,17 @@ export default function ProfileCreated() {
             <FiMail /> A confirmation email has been sent to <b>john.doe@gmail.com</b> with your submission details.
           </div>
 
-          {/* Profile Status */}
+          {/* Profile Status Cards */}
           <div className="grid grid-cols-3 gap-4">
-            {[ { icon: FiUser, label: "Profile Submitted" }, { icon: FiFileText, label: "CV Uploaded" }, { icon: FiDatabase, label: "Candidate Record Created" } ].map((item, i) => (
+            {[ 
+              { icon: FiUser, label: "Profile Submitted", desc: "Your details have been successfully submitted." }, 
+              { icon: FiFileText, label: "CV Uploaded", desc: "Your CV has been uploaded successfully." }, 
+              { icon: FiDatabase, label: "Candidate Record Created", desc: "Your profile is now added to our secure database." } 
+            ].map((item, i) => (
               <div key={i} className="border border-gray-100 rounded-2xl p-6 text-center shadow-sm">
                 <item.icon className="mx-auto text-[#39a75f] mb-3 text-2xl" />
                 <p className="font-bold text-sm text-gray-800">{item.label}</p>
-                <p className="text-[10px] text-gray-400 mt-1">Your details have been successfully submitted.</p>
+                <p className="text-[10px] text-gray-400 mt-1">{item.desc}</p>
               </div>
             ))}
           </div>
@@ -70,14 +73,28 @@ export default function ProfileCreated() {
         </div>
 
         {/* Process Steps */}
-        <div className="bg-white p-8 rounded-3xl border flex justify-between items-center relative">
-            {["Profile Created", "Under Review", "Opportunity Matching", "Recruiter Contact"].map((t, i) => (
-                <div key={i} className="flex flex-col items-center gap-3 relative z-10 w-1/4">
-                    <div className="w-10 h-10 rounded-full bg-[#0b5d90] text-white flex items-center justify-center font-bold">{i+1}</div>
-                    <p className="text-xs font-bold text-gray-700">{t}</p>
+        {/* What happens next? Section */}
+        <div className="bg-white p-8 rounded-3xl border shadow-sm">
+          <h3 className="text-lg font-bold text-gray-800 mb-8 text-center">What happens next?</h3>
+          
+          <div className="flex justify-between items-start relative">
+            {/* Connecting Line - පියවර සම්බන්ධ කරන රේඛාව */}
+            <div className="absolute top-[20px] left-[10%] right-[10%] h-[2px] bg-gray-100 -z-0"></div>
+
+            {[
+              { step: "1", label: "Profile Created" },
+              { step: "2", label: "Under Review" },
+              { step: "3", label: "Opportunity Matching" },
+              { step: "4", label: "Recruiter Contact" }
+            ].map((item, i) => (
+              <div key={i} className="flex flex-col items-center gap-3 relative z-10">
+                <div className="w-10 h-10 rounded-full bg-[#0b5d90] text-white flex items-center justify-center font-bold shadow-md">
+                  {item.step}
                 </div>
+                <p className="text-xs font-bold text-gray-600 text-center w-24">{item.label}</p>
+              </div>
             ))}
-            <div className="absolute top-[38px] left-[15%] right-[15%] h-[2px] bg-gray-200 -z-0"></div>
+          </div>
         </div>
       </main>
     </div>
