@@ -7,9 +7,11 @@ import AdditionalDetails from './Candidate/AdditionalDetails';
 import SignIn from './Candidate/SignIn';
 import ExportData from './Candidate/ExportData';
 import CandidateDashboard from './Candidate/CandidateDashboard';
+import AdminDashboard from './Admin/AdminDashboard';
 import DashboardLayout from './components/DashboardLayout';
 import SettingsPage from './Candidate/Settings';
 import Reports from './Admin/Reports';
+import ProfileCreated from './Candidate/ProfileCreated';
 import SalaryInsights from './Admin/SalaryInsights';
 import type { BasicInfoData, ProfessionalInfoData } from './Candidate/types';
 import type { CandidateFormData } from './types/candidate';
@@ -102,6 +104,7 @@ function RegistrationFlow() {
             />
           }
         />
+        
         <Route path="/" element={<Navigate to="/candidate/registration/basic" replace />} />
         <Route path="*" element={<Navigate to="/candidate/registration/basic" replace />} />
       </Routes>
@@ -117,12 +120,15 @@ function App() {
         {/* Public Routes - Everyone can access */}
         <Route path="/signin" element={<SignIn />} />
         
+        
         {/* Registration Flow - Public access */}
         <Route path="/candidate/registration/*" element={<RegistrationFlow />} />
+        <Route path="/candidate/profile" element={<ProfileCreated />} />
         
         {/* Dashboard Routes - Now public without authentication */}
          <Route element={<DashboardLayout />}>
         <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
+        <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/settings" element={<SettingsPage />} />       
         <Route path="/exportdata" element={<ExportData />} />
         <Route path="/admin/reports" element={<Reports />} />
