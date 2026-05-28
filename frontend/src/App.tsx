@@ -14,6 +14,7 @@ import SettingsPage from './Candidate/Settings';
 import Reports from './Admin/Reports';
 import ProfileCreated from './Candidate/ProfileCreated';
 import SalaryInsights from './Admin/SalaryInsights';
+import Navbar from './components/Navbar';
 import type { BasicInfoData, ProfessionalInfoData } from './Candidate/types';
 import type { CandidateFormData } from './types/candidate';
 import './App.css';
@@ -69,6 +70,9 @@ function RegistrationFlow() {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <div className="mb-8">
+        <Navbar />
+      </div>
       <Routes>
         <Route
           path="/basic"
@@ -156,7 +160,7 @@ function App() {
         </Route>
         
         {/* Redirects */}
-        <Route path="/" element={<Navigate to="/candidate/registration/basic" replace />} />
+        <Route path="/" element={<Navigate to="/signin" replace />} />
         <Route path="/candidate" element={<Navigate to="/candidate/registration/basic" replace />} />
         <Route path="*" element={<Navigate to="/candidate/registration/basic" replace />} />
       </Routes>
