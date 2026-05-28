@@ -43,8 +43,8 @@ export default function DashboardLayout() {
   };
 
   const navItems = [
-    { icon: <LayoutDashboard size={20}/>, label: "Dashboard", to: "/candidate/dashboard" },
-    { icon: <UserPlus size={20}/>, label: "Candidates", to: "/admin/candidate" },
+    { icon: <LayoutDashboard size={20}/>, label: "Dashboard", to: "/admin/dashboard" },
+    { icon: <UserPlus size={20}/>, label: "Candidates", to: "/candidate/dashboard" },
     { icon: <Briefcase size={20}/>, label: "Fields", to: "/admin/fields" },
     { icon: <Star size={20}/>, label: "Skills", to: "/admin/skills" },
     { icon: <BarChartBig size={20}/>, label: "Reports", to: "/admin/reports" },
