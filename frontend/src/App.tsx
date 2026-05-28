@@ -6,6 +6,7 @@ import SkillsExperience from './Candidate/SkillsExperience';
 import AdditionalDetails from './Candidate/AdditionalDetails';
 import UploadCV from './Candidate/UploadCV';
 import SignIn from './Candidate/SignIn';
+import Home from './Candidate/Home';
 import ExportData from './Candidate/ExportData';
 import CandidateDashboard from './Candidate/CandidateDashboard';
 import AdminDashboard from './Admin/AdminDashboard';
@@ -139,6 +140,7 @@ function App() {
       <Routes>
         {/* Public Routes - Everyone can access */}
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/home" element={<Home />} />
         
         
         {/* Registration Flow - Public access */}
