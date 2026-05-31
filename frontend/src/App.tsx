@@ -15,6 +15,9 @@ import SettingsPage from './Candidate/Settings';
 import Reports from './Admin/Reports';
 import ProfileCreated from './Candidate/ProfileCreated';
 import SalaryInsights from './Admin/SalaryInsights';
+import Fields from './Admin/Fields';
+import Skills from './Admin/Skills';
+import Users from './Admin/Users';
 import Navbar from './components/Navbar';
 import type { BasicInfoData, ProfessionalInfoData } from './Candidate/types';
 import type { CandidateFormData } from './types/candidate';
@@ -158,6 +161,9 @@ function App() {
         <Route path="/settings" element={<SettingsPage />} />       
         <Route path="/exportdata" element={<ExportData />} />
         <Route path="/admin/reports" element={<Reports />} />
+        <Route path="/admin/fields" element={<Fields />} />
+        <Route path="/admin/skills" element={<Skills />} />
+        <Route path="/admin/users" element={<Users />} />
         <Route path="/admin/salary-insights" element={<SalaryInsights />} />
         </Route>
         

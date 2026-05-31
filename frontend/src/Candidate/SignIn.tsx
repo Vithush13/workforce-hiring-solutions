@@ -72,7 +72,7 @@ if (activeTab === 'signup') {
       }
 
       if (profile?.role === 'admin') {
-        navigate('/settings'); 
+        navigate('/admin/dashboard'); 
       } else {
         navigate('/candidate/registration/basic'); 
       }
