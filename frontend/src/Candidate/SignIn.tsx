@@ -60,8 +60,18 @@ if (activeTab === 'signup') {
     }
 
     if (data.user) {
-      const ADMIN_EMAIL = "shavindialoka69@gmail.com"; 
-      if (data.user.email === ADMIN_EMAIL) {
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileError) {
+        alert("Error fetching user profile: " + profileError.message);
+        return;
+      }
+
+      if (profile?.role === 'admin') {
         navigate('/settings'); 
       } else {
         navigate('/candidate/registration/basic'); 
