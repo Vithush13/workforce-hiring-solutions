@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Search, Filter, ChevronDown } from 'lucide-react'; 
+import { useNavigate } from 'react-router-dom'; 
 
 interface Candidate {
   id: number;
@@ -29,6 +30,7 @@ const candidatesData: Candidate[] = [
 ];
 
 export default function CandidatesPage() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       {/* Header Section */}
@@ -39,7 +41,12 @@ export default function CandidatesPage() {
         </div>
         <div className="flex gap-3">
           <button className="px-4 py-2 bg-white border rounded-lg text-sm font-medium">Export</button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium">+ Add Candidate</button>
+          <button 
+            onClick={() => navigate('/candidate/registration/basic')} 
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium"
+          >
+            + Add Candidate
+          </button>
         </div>
       </div>
 
