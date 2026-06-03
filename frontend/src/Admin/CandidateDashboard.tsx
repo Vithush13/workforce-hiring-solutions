@@ -1,9 +1,8 @@
 // src/pages/CandidatesPage.tsx
 import { useState } from 'react';
-import { Search, Filter, ChevronDown, Plus, Eye, Edit2, Trash2 } from 'lucide-react';
+import { Search, Plus, Eye, Edit2, Trash2 } from 'lucide-react';
 import { useCandidates } from '../hooks/useCandidates';
 import { CandidateModal } from '../components/CandidateModal';
-import toast from 'react-hot-toast';
 import type { Candidate, CreateCandidateDto } from '../types/candidate';
 
 export default function CandidatesPage() {
@@ -189,7 +188,7 @@ export default function CandidatesPage() {
                         </tr>
                     </thead>
                     <tbody className="text-sm">
-                        {filteredCandidates.map((candidate, index) => (
+                        {filteredCandidates.map((candidate) => (
                             <tr key={candidate.id} className="border-b hover:bg-gray-50 transition-colors">
                                 <td className="p-4">
                                     <input type="checkbox" className="rounded" />
