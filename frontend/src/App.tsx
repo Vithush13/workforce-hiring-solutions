@@ -26,6 +26,7 @@ import Navbar from './components/Navbar';
 import { supabase } from './supabaseClient';
 import { saveCandidate } from './Candidate/candidateService';
 import MyCVPage from './Candidate/MyCVPage';
+import EditProfile from './Candidate/Editprofile';
 
 // නිවැරදි:
 import type { BasicInfoData, ProfessionalInfoData, CandidateFormData } from './types/candidate';
@@ -234,6 +235,7 @@ function App() {
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/candidate/profile" element={<ProfileCreated />} />
           <Route path="/candidate/cv" element={<MyCVPage />} />
+          <Route path="/candidate/edit-profile" element={<EditProfile />} />
           {/* ... other candidate routes */}
         </Route>
 

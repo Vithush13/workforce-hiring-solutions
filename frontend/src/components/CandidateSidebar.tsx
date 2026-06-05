@@ -36,9 +36,9 @@ const navItems = [
   { label: 'My Profile',  to: '/candidate/profile',    icon: User },
   { label: 'My CV', to: '/candidate/cv', icon: Upload },
   { label: 'Jobs',        to: '/candidate/jobs',       icon: Briefcase },
-  { label: 'Documents',   to: '/candidate/documents',  icon: FileText },
-  { label: 'Notifications', to: '/candidate/notifications', icon: Bell },
-  { label: 'Settings',    to: '/settings',             icon: Settings },
+//   { label: 'Documents',   to: '/candidate/documents',  icon: FileText },
+//   { label: 'Notifications', to: '/candidate/notifications', icon: Bell },
+  { label: 'Settings',    to: '/candidate/edit-profile',             icon: Settings },
 ];
 
 export default function CandidateSidebar() {
