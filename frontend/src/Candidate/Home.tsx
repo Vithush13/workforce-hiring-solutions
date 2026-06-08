@@ -443,7 +443,7 @@ export default function Home() {
 
             <div className="flex flex-wrap gap-3">
               <Link
-                to="/signup"
+                to="/signin"
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-[14px] font-bold text-white bg-gradient-to-r from-[#0b3d6b] to-[#0e8c7a] shadow-lg shadow-blue-900/25 hover:shadow-xl hover:shadow-blue-900/35 hover:-translate-y-0.5 transition-all"
               >
                 Get Started Free <ArrowRight size={15} />
