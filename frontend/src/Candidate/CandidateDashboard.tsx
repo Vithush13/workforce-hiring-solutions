@@ -80,6 +80,9 @@ export default function CandidateDashboard() {
     fetchProfile();
   }, [navigate]);
 
+  if (loading) return <div>Loading...</div>;
+  if (error || !profile) return <div>Error...</div>;
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
@@ -126,7 +129,11 @@ export default function CandidateDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6 font-sans">
+    <div className="min-h-screen bg-slate-50 font-sans">
+      {/* <Header 
+        userName={profile.name} 
+        userEmail={profile.email} 
+      /> */}
       <div className="max-w-6xl mx-auto">
 
         {/* ===== TOP BAR ===== */}
@@ -141,7 +148,7 @@ export default function CandidateDashboard() {
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/candidate/edit-profile')}
               className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-700 hover:bg-slate-50 transition"
             >
               ✏️ Edit Profile

@@ -106,7 +106,7 @@ const handleSubmit = async (e: FormEvent) => {
       user.id
     );
 
-    onNext(); // Dashboard එකට redirect
+    onNext(); // Dashboard redirect
   } catch (error: any) {
     console.error(error);
     alert(`Submission failed: ${error.message}`);
