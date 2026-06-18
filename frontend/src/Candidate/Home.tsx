@@ -299,7 +299,7 @@ export default function Home() {
 
     {/* Centre logo */}
     <div className="absolute w-24 h-24 rounded-full bg-gradient-to-br from-[#0b3d6b] to-[#0e8c7a] flex items-center justify-center shadow-[0_0_40px_rgba(47,184,82,0.3)]">
-      <img src="assets/logo.png" alt="WHS" className="w-16 h-16 object-contain rounded-full" />
+      <img src={logo} alt="WHS" className="w-16 h-16 object-contain rounded-full object-cover" />
     </div>
   </div>
 
