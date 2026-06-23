@@ -4,7 +4,7 @@ import { Outlet, Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Settings, Download, LogOut, Menu, ChevronDown, Bell, User, X,
   UserPlus, Star, CircleDollarSign, BarChartBig, Briefcase, FileText, Camera,
-  Save, AlertCircle, Trash2, Users, CheckCircle, CheckCheck
+  Save, AlertCircle, Trash2, Users, CheckCircle,
 } from 'lucide-react';
 import logo from '../assets/logo.png';
 import securityImage from '../assets/8.avif';
@@ -78,7 +78,6 @@ export default function DashboardLayout() {
   const isDeletingRef = useRef<boolean>(false);
   const deletedIdsRef = useRef<Set<string>>(new Set());
 
-  // Fetch notifications
   const fetchNotifications = async () => {
     if (!user) return;
 
@@ -111,7 +110,6 @@ export default function DashboardLayout() {
     }
   };
 
-  // Delete single notification
   const deleteSingleNotification = async (notificationId: string) => {
     if (!user) return;
 
@@ -119,7 +117,6 @@ export default function DashboardLayout() {
     setShowDeleteConfirm(true);
   };
 
-  // Confirm delete single notification
   const confirmDeleteSingle = async () => {
     if (!notificationToDelete || !user) return;
 
@@ -161,7 +158,6 @@ export default function DashboardLayout() {
     }
   };
 
-  // Clear all notifications - PERMANENT DELETE
   const clearAllNotifications = async () => {
     if (!user || notifications.length === 0) return;
 
@@ -214,7 +210,6 @@ export default function DashboardLayout() {
     }
   };
 
-  // Mark notification as read
   const markAsRead = async (notificationId: string) => {
     try {
       const { error } = await supabase
@@ -235,7 +230,6 @@ export default function DashboardLayout() {
     }
   };
 
-  // Mark all as read
   const markAllAsRead = async () => {
     if (!user) return;
 
@@ -257,7 +251,6 @@ export default function DashboardLayout() {
     }
   };
 
-  // Handle notification click - Navigate to jobs page
   const handleNotificationClick = async (notification: Notification, e: React.MouseEvent) => {
     // Prevent click if delete button was clicked
     if ((e.target as HTMLElement).closest('.delete-notification-btn')) {
@@ -762,7 +755,6 @@ export default function DashboardLayout() {
     }
   };
 
-  // Delete Confirmation Modal
   const DeleteConfirmModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
       <div className="bg-white rounded-xl max-w-md w-full p-6">
@@ -797,7 +789,6 @@ export default function DashboardLayout() {
     </div>
   );
 
-  // Remove Confirm Modal
   const RemoveConfirmModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-[60] flex items-center justify-center p-4">
       <div className="bg-white rounded-xl max-w-md w-full p-6">
@@ -1064,7 +1055,7 @@ export default function DashboardLayout() {
                             onClick={markAllAsRead}
                             className="text-xs text-blue-600 hover:text-blue-700 flex items-center gap-1 whitespace-nowrap"
                           >
-                            <CheckCheck size={14} />
+                            <CheckCircle size={14} />
                             <span className="hidden sm:inline">Mark all read</span>
                           </button>
                         )}
