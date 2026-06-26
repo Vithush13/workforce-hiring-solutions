@@ -1,8 +1,8 @@
 // src/Candidate/SignIn.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../global.css';
 import { supabase } from '../supabaseClient';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, useLocation, Link } from 'react-router-dom'; 
 
 import {
   FiMail,
@@ -19,6 +19,7 @@ import logo from '../../assets/logo.png';
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('signin');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -27,9 +28,16 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
 
+  // Get redirect path from URL params
+  const getRedirectPath = () => {
+    const params = new URLSearchParams(location.search);
+    return params.get('redirect') || '/candidate/candidate-dashboard';
+  };
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    const redirectPath = getRedirectPath();
     
     if (activeTab === 'signup') {
       // Sign Up
@@ -81,11 +89,11 @@ const SignIn = () => {
 
         if (profileError) {
           console.error("Error fetching user profile:", profileError);
-          navigate('/candidate/candidate-dashboard');
+          navigate(redirectPath);
         } else if (profile?.role === 'admin') {
           navigate('/admin/dashboard');
         } else {
-          navigate('/candidate/candidate-dashboard');
+          navigate(redirectPath);
         }
       }
       setLoading(false);
@@ -94,10 +102,11 @@ const SignIn = () => {
 
   const handleGoogleSignIn = async () => {
     try {
+      const redirectPath = getRedirectPath();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/candidate/candidate-dashboard`
+          redirectTo: `${window.location.origin}${redirectPath}`
         }
       });
       if (error) throw error;
@@ -108,10 +117,11 @@ const SignIn = () => {
 
   const handleLinkedInSignIn = async () => {
     try {
+      const redirectPath = getRedirectPath();
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'linkedin_oidc',
         options: {
-          redirectTo: `${window.location.origin}/candidate/candidate-dashboard`
+          redirectTo: `${window.location.origin}${redirectPath}`
         }
       });
       if (error) throw error;
@@ -122,12 +132,14 @@ const SignIn = () => {
 
   return (
     <div className="auth-container">
-      {/* LEFT SIDE - No changes */}
+      {/* LEFT SIDE */}
       <div className="auth-left">
         <div className="wave-bg"></div>
         <div className="top-logo">
-          <img src={logo} alt="Logo" />
-          <span>WORKFORCE HIRING SOLUTIONS</span>
+          <Link to="/" className="flex items-center gap-3 no-underline">
+            <img src={logo} alt="Logo" />
+            <span>WORKFORCE HIRING SOLUTIONS</span>
+          </Link>
         </div>
         <div className="left-content">
           <h1>Join Our <br /> <span>Global Talent</span> <br /> Network</h1>
@@ -148,7 +160,11 @@ const SignIn = () => {
       {/* RIGHT SIDE: Dynamic Form */}
       <div className="auth-right">
         <div className="auth-card">
-          <div className="card-logo"><img src={logo} alt="Logo" /></div>
+          <div className="card-logo">
+            <Link to="/">
+              <img src={logo} alt="Logo" />
+            </Link>
+          </div>
           <h2>{activeTab === 'signin' ? 'Welcome' : 'Create Account'}</h2>
           <small>{activeTab === 'signin' ? 'Join our candidate pool' : 'Join our global candidate pool'}</small>
 

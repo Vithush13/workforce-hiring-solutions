@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ArrowRight, CheckCircle2, Star, MapPin, Users, Shield,
   Zap, Award, ChevronRight, Phone, Mail, Globe,
   Briefcase, UserCheck, Building2, Clock3,
 } from 'lucide-react';
-import logo from '../assets/logo.png'
+import logo from '../assets/logo.png';
+import { supabase } from '../supabaseClient';
 
 // ─── Brand tokens ──────────────────────────────────────────────────────────────
 // Navy   : #0b3d6b  |  Mid navy : #1a5490  |  Teal : #0e8c7a
@@ -97,13 +98,117 @@ const FIELDS = [
 
 // ─── Component ────────────────────────────────────────────────────────────────
 export default function Home() {
+  const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 24);
     window.addEventListener('scroll', fn, { passive: true });
     return () => window.removeEventListener('scroll', fn);
   }, []);
+
+  // Check authentication status and user role on mount
+  useEffect(() => {
+    const checkAuthAndRole = async () => {
+      setIsLoadingAuth(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const isAuth = !!session;
+        setIsAuthenticated(isAuth);
+
+        if (isAuth && session?.user) {
+          // Get user role from profiles table
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+          if (!error && profile) {
+            setUserRole(profile.role);
+          } else {
+            console.error('Error fetching user profile:', error);
+            setUserRole(null);
+          }
+        } else {
+          setUserRole(null);
+        }
+      } catch (error) {
+        console.error('Error checking auth:', error);
+        setUserRole(null);
+      } finally {
+        setIsLoadingAuth(false);
+      }
+    };
+
+    checkAuthAndRole();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const isAuth = !!session;
+      setIsAuthenticated(isAuth);
+
+      if (isAuth && session?.user) {
+        // Get user role when auth changes
+        const { data: profile, error } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single();
+
+        if (!error && profile) {
+          setUserRole(profile.role);
+        } else {
+          setUserRole(null);
+        }
+      } else {
+        setUserRole(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Handle dashboard navigation based on user role
+  const handleDashboardNavigation = () => {
+    if (userRole === 'admin') {
+      navigate('/admin/dashboard');
+    } else {
+      navigate('/candidate/candidate-dashboard');
+    }
+  };
+
+  // Unified function to handle candidate registration navigation
+  const handleCandidateRegistration = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // Always navigate to sign in page
+      navigate('/signin');
+    } catch (error) {
+      console.error('Error navigating to sign in:', error);
+      navigate('/signin');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show loading state while checking auth
+  if (isLoadingAuth) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#061e35]">
+        <div className="text-white text-center">
+          <div className="w-16 h-16 border-4 border-[#2fb852] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/60">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="font-sans text-gray-800 antialiased overflow-x-hidden">
@@ -125,38 +230,56 @@ export default function Home() {
             </span>
           </Link>
 
-        {/* Nav */}
-        <nav className="hidden md:flex items-center gap-7 text-[14px] font-medium text-gray-600">
-          {[
-            { label: 'How It Works',   href: '#how'        },
-            { label: 'For Candidates', href: '#candidates' },
-            { label: 'For Companies',  href: '#companies'  },
-            { label: 'About Us',       href: '#about'      },
-          ].map(item => (
-            <a
-              key={item.label}
-              href={item.href}
-              onClick={(e) => {
-                e.preventDefault();
-                document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              }}
-              className="hover:text-[#0b3d6b] transition-colors"
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
+          {/* Nav */}
+          <nav className="hidden md:flex items-center gap-7 text-[14px] font-medium text-gray-600">
+            {[
+              { label: 'How It Works',   href: '#how'        },
+              { label: 'For Candidates', href: '#candidates' },
+              { label: 'For Companies',  href: '#companies'  },
+              { label: 'About Us',       href: '#about'      },
+            ].map(item => (
+              <a
+                key={item.label}
+                href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                className="hover:text-[#0b3d6b] transition-colors"
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
 
           {/* Auth */}
           <div className="flex items-center gap-2.5">
-            <Link to="/signin"
-              className=" inline-flex px-4 py-2 rounded-xl text-[14px] font-semibold text-[#0b3d6b] border border-[#0b3d6b]/30 hover:border-[#0b3d6b] hover:bg-[#0b3d6b]/5 transition-all">
-              Sign In
-            </Link>
-            <Link to="/signin"
-              className=" hidden sm:inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-[14px] font-semibold text-white bg-gradient-to-r from-[#0b3d6b] to-[#1a5490] hover:from-[#1a5490] hover:to-[#0e8c7a] shadow-md hover:shadow-lg transition-all">
-              Join Talent Pool <ChevronRight size={14} />
-            </Link>
+            {isAuthenticated ? (
+              <button
+                onClick={handleDashboardNavigation}
+                className="inline-flex px-4 py-2 rounded-xl text-[14px] font-semibold text-white bg-[#0b3d6b] hover:bg-[#1a5490] transition-all"
+              >
+                {userRole === 'admin' ? 'Admin Dashboard' : 'Dashboard'}
+              </button>
+            ) : (
+              <Link to="/signin"
+                className="inline-flex px-4 py-2 rounded-xl text-[14px] font-semibold text-[#0b3d6b] border border-[#0b3d6b]/30 hover:border-[#0b3d6b] hover:bg-[#0b3d6b]/5 transition-all">
+                Sign In
+              </Link>
+            )}
+            <button
+              onClick={handleCandidateRegistration}
+              disabled={isLoading}
+              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2 rounded-xl text-[14px] font-semibold text-white bg-gradient-to-r from-[#0b3d6b] to-[#1a5490] hover:from-[#1a5490] hover:to-[#0e8c7a] shadow-md hover:shadow-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  Join Talent Pool <ChevronRight size={14} />
+                </>
+              )}
+            </button>
           </div>
         </div>
       </header>
@@ -197,10 +320,19 @@ export default function Home() {
 
             {/* Two audience CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 mb-10">
-              <Link to="/signin"
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-[#2fb852] to-[#0e8c7a] text-white font-bold text-[15px] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
-                <UserCheck size={18} /> Join as Candidate
-              </Link>
+              <button
+                onClick={handleCandidateRegistration}
+                disabled={isLoading}
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-gradient-to-r from-[#2fb852] to-[#0e8c7a] text-white font-bold text-[15px] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isLoading ? (
+                  <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <>
+                    <UserCheck size={18} /> Join as Candidate
+                  </>
+                )}
+              </button>
               <a href="#companies"
                 onClick={(e) => {
                   e.preventDefault();
@@ -222,100 +354,100 @@ export default function Home() {
             </div>
           </div>
 
-{/* Right — visual */}
-<div className="hidden lg:flex flex-col gap-6 items-center justify-center">
-  <style>{`
-    @keyframes spin-slow   { from { transform: rotate(0deg);   } to { transform: rotate(360deg);  } }
-    @keyframes spin-rev    { from { transform: rotate(0deg);   } to { transform: rotate(-360deg); } }
-    @keyframes float-badge { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
-    @keyframes pulse-ring  { 0%,100% { opacity:0.15; transform:scale(1);    } 50% { opacity:0.35; transform:scale(1.04); } }
-    @keyframes fade-in-up  { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-    .orbit-outer { animation: spin-slow 22s linear infinite; }
-    .orbit-inner { animation: spin-rev  14s linear infinite; }
-    .badge-float { animation: float-badge 3.6s ease-in-out infinite; }
-    .badge-float:nth-child(2) { animation-delay: -0.9s; }
-    .badge-float:nth-child(3) { animation-delay: -1.8s; }
-    .badge-float:nth-child(4) { animation-delay: -2.7s; }
-    .ring-pulse  { animation: pulse-ring 3s ease-in-out infinite; }
-    .fields-card { animation: fade-in-up 0.8s ease both; animation-delay: 0.4s; }
-  `}</style>
+          {/* Right — visual */}
+          <div className="hidden lg:flex flex-col gap-6 items-center justify-center">
+            <style>{`
+              @keyframes spin-slow   { from { transform: rotate(0deg);   } to { transform: rotate(360deg);  } }
+              @keyframes spin-rev    { from { transform: rotate(0deg);   } to { transform: rotate(-360deg); } }
+              @keyframes float-badge { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-6px); } }
+              @keyframes pulse-ring  { 0%,100% { opacity:0.15; transform:scale(1);    } 50% { opacity:0.35; transform:scale(1.04); } }
+              @keyframes fade-in-up  { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+              .orbit-outer { animation: spin-slow 22s linear infinite; }
+              .orbit-inner { animation: spin-rev  14s linear infinite; }
+              .badge-float { animation: float-badge 3.6s ease-in-out infinite; }
+              .badge-float:nth-child(2) { animation-delay: -0.9s; }
+              .badge-float:nth-child(3) { animation-delay: -1.8s; }
+              .badge-float:nth-child(4) { animation-delay: -2.7s; }
+              .ring-pulse  { animation: pulse-ring 3s ease-in-out infinite; }
+              .fields-card { animation: fade-in-up 0.8s ease both; animation-delay: 0.4s; }
+            `}</style>
 
-  {/* Orbit diagram */}
-  <div className="relative flex items-center justify-center" style={{ width: 340, height: 340 }}>
+            {/* Orbit diagram */}
+            <div className="relative flex items-center justify-center" style={{ width: 340, height: 340 }}>
 
-    {/* Pulsing glow */}
-    <div className="ring-pulse absolute w-72 h-72 rounded-full"
-         style={{ background: 'radial-gradient(circle, rgba(47,184,82,0.13) 0%, transparent 70%)' }} />
+              {/* Pulsing glow */}
+              <div className="ring-pulse absolute w-72 h-72 rounded-full"
+                   style={{ background: 'radial-gradient(circle, rgba(47,184,82,0.13) 0%, transparent 70%)' }} />
 
-    {/* Outer rotating ring */}
-    <div className="orbit-outer absolute w-72 h-72 rounded-full border border-[#2fb852]/25">
-      {[0, 90, 180, 270].map(deg => (
-        <div key={deg} className="absolute w-2 h-2 rounded-full bg-[#2fb852]/60"
-             style={{ top:'50%', left:'50%', transform:`rotate(${deg}deg) translateY(-143px) translateX(-4px)` }} />
-      ))}
-    </div>
+              {/* Outer rotating ring */}
+              <div className="orbit-outer absolute w-72 h-72 rounded-full border border-[#2fb852]/25">
+                {[0, 90, 180, 270].map(deg => (
+                  <div key={deg} className="absolute w-2 h-2 rounded-full bg-[#2fb852]/60"
+                       style={{ top:'50%', left:'50%', transform:`rotate(${deg}deg) translateY(-143px) translateX(-4px)` }} />
+                ))}
+              </div>
 
-    {/* Inner counter-rotating ring */}
-    <div className="orbit-inner absolute w-44 h-44 rounded-full border border-[#1a5490]/30">
-      {[45, 135, 225, 315].map(deg => (
-        <div key={deg} className="absolute w-1.5 h-1.5 rounded-full bg-[#1a5490]/50"
-             style={{ top:'50%', left:'50%', transform:`rotate(${deg}deg) translateY(-87px) translateX(-3px)` }} />
-      ))}
-    </div>
+              {/* Inner counter-rotating ring */}
+              <div className="orbit-inner absolute w-44 h-44 rounded-full border border-[#1a5490]/30">
+                {[45, 135, 225, 315].map(deg => (
+                  <div key={deg} className="absolute w-1.5 h-1.5 rounded-full bg-[#1a5490]/50"
+                       style={{ top:'50%', left:'50%', transform:`rotate(${deg}deg) translateY(-87px) translateX(-3px)` }} />
+                ))}
+              </div>
 
-    <div className="absolute w-56 h-56 rounded-full border border-white/[0.06]" />
+              <div className="absolute w-56 h-56 rounded-full border border-white/[0.06]" />
 
-    {/* Top badge */}
-    <div className="badge-float absolute" style={{ top: 12, left:'50%', transform:'translateX(-50%)' }}>
-      <span className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
-            style={{ background:'#dbeafe', color:'#1d4ed8' }}>
-        <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8]" /> 5K+ Candidates
-      </span>
-    </div>
+              {/* Top badge */}
+              <div className="badge-float absolute" style={{ top: 12, left:'50%', transform:'translateX(-50%)' }}>
+                <span className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                      style={{ background:'#dbeafe', color:'#1d4ed8' }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#1d4ed8]" /> 5K+ Candidates
+                </span>
+              </div>
 
-    {/* Right badge */}
-    <div className="badge-float absolute" style={{ top:'50%', right: -10, transform:'translateY(-50%)' }}>
-      <span className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
-            style={{ background:'#dcfce7', color:'#166534' }}>
-        <span className="w-1.5 h-1.5 rounded-full bg-[#166534]" /> 300+ Companies
-      </span>
-    </div>
+              {/* Right badge */}
+              <div className="badge-float absolute" style={{ top:'50%', right: -10, transform:'translateY(-50%)' }}>
+                <span className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                      style={{ background:'#dcfce7', color:'#166534' }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#166534]" /> 300+ Companies
+                </span>
+              </div>
 
-    {/* Bottom badge */}
-    <div className="badge-float absolute" style={{ bottom: 12, left:'50%', transform:'translateX(-50%)' }}>
-      <span className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
-            style={{ background:'#fce7f3', color:'#9d174d' }}>
-        <span className="w-1.5 h-1.5 rounded-full bg-[#9d174d]" /> 98% Satisfaction
-      </span>
-    </div>
+              {/* Bottom badge */}
+              <div className="badge-float absolute" style={{ bottom: 12, left:'50%', transform:'translateX(-50%)' }}>
+                <span className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                      style={{ background:'#fce7f3', color:'#9d174d' }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#9d174d]" /> 98% Satisfaction
+                </span>
+              </div>
 
-    {/* Left badge */}
-    <div className="badge-float absolute" style={{ top:'50%', left: -10, transform:'translateY(-50%)' }}>
-      <span className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
-            style={{ background:'#fef9c3', color:'#854d0e' }}>
-        <span className="w-1.5 h-1.5 rounded-full bg-[#854d0e]" /> &lt;7 day fill
-      </span>
-    </div>
+              {/* Left badge */}
+              <div className="badge-float absolute" style={{ top:'50%', left: -10, transform:'translateY(-50%)' }}>
+                <span className="flex items-center gap-1.5 text-[11px] font-bold px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap"
+                      style={{ background:'#fef9c3', color:'#854d0e' }}>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#854d0e]" /> &lt;7 day fill
+                </span>
+              </div>
 
-    {/* Centre logo */}
-    <div className="absolute w-24 h-24 rounded-full bg-gradient-to-br from-[#0b3d6b] to-[#0e8c7a] flex items-center justify-center shadow-[0_0_40px_rgba(47,184,82,0.3)]">
-      <img src={logo} alt="WHS" className="w-16 h-16 object-contain rounded-full object-cover" />
-    </div>
-  </div>
+              {/* Centre logo */}
+              <div className="absolute w-24 h-24 rounded-full bg-gradient-to-br from-[#0b3d6b] to-[#0e8c7a] flex items-center justify-center shadow-[0_0_40px_rgba(47,184,82,0.3)]">
+                <img src={logo} alt="WHS" className="w-16 h-16 object-contain rounded-full object-cover" />
+              </div>
+            </div>
 
-  {/* Fields card */}
-  <div className="fields-card bg-white/[0.07] border border-white/10 rounded-2xl p-5 w-full max-w-sm">
-    <p className="text-[10px] font-bold uppercase tracking-[2.5px] text-white/35 mb-3">Fields we cover</p>
-    <div className="flex flex-wrap gap-2">
-      {FIELDS.map(f => (
-        <span key={f}
-          className="text-[11px] px-2.5 py-1 rounded-full border border-white/10 text-white/55 hover:border-[#2fb852]/50 hover:text-[#5fda7e] transition-colors cursor-default">
-          {f}
-        </span>
-      ))}
-    </div>
-  </div>
-</div>
+            {/* Fields card */}
+            <div className="fields-card bg-white/[0.07] border border-white/10 rounded-2xl p-5 w-full max-w-sm">
+              <p className="text-[10px] font-bold uppercase tracking-[2.5px] text-white/35 mb-3">Fields we cover</p>
+              <div className="flex flex-wrap gap-2">
+                {FIELDS.map(f => (
+                  <span key={f}
+                    className="text-[11px] px-2.5 py-1 rounded-full border border-white/10 text-white/55 hover:border-[#2fb852]/50 hover:text-[#5fda7e] transition-colors cursor-default">
+                    {f}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -383,10 +515,19 @@ export default function Home() {
               ))}
             </ul>
 
-            <Link to="/signin"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[14px] font-bold text-white bg-gradient-to-r from-[#0b3d6b] to-[#0e8c7a] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all">
-              Register as a Candidate <ArrowRight size={15} />
-            </Link>
+            <button
+              onClick={handleCandidateRegistration}
+              disabled={isLoading}
+              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-xl text-[14px] font-bold text-white bg-gradient-to-r from-[#0b3d6b] to-[#0e8c7a] shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <span className="inline-block w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  Register as a Candidate <ArrowRight size={15} />
+                </>
+              )}
+            </button>
             <p className="text-[12px] text-gray-400 mt-3">Free to join · No commitment · Confidential</p>
           </div>
 
@@ -476,33 +617,33 @@ export default function Home() {
       </section>
 
       {/* ABOUT */}
-<section id="about" className="py-20 px-6 lg:px-10 bg-white scroll-mt-[68px]">
-  <div className="max-w-7xl mx-auto text-center">
-    <p className="text-[11px] font-bold uppercase tracking-[3px] text-[#1f8f3e] mb-3">About WHS</p>
-    <h2 className="text-[clamp(26px,3vw,42px)] font-black text-[#061e35] leading-tight mb-5">
-      Sri Lanka's most trusted<br />
-      <span className="text-[#0b3d6b]">talent acquisition partner</span>
-    </h2>
-    <p className="text-[16px] text-gray-500 max-w-2xl mx-auto leading-relaxed font-light mb-12">
-      Founded in 2018, WHS was built on one belief — great talent and great companies
-      deserve to find each other without the noise. We personally manage every placement,
-      from first contact to first day on the job.
-    </p>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-3xl mx-auto">
-      {[
-        { num:'2018',   label:'Year Founded'          },
-        { num:'5,000+', label:'Professionals Placed'   },
-        { num:'300+',   label:'Partner Companies'      },
-        { num:'98%',    label:'Client Retention Rate'  },
-      ].map(m => (
-        <div key={m.label} className="bg-[#f4f8fb] rounded-2xl p-5 border border-[#e8f0f9]">
-          <p className="text-[26px] font-black text-[#0b3d6b] leading-none">{m.num}</p>
-          <p className="text-[12px] text-gray-500 mt-1">{m.label}</p>
+      <section id="about" className="py-20 px-6 lg:px-10 bg-white scroll-mt-[68px]">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-[11px] font-bold uppercase tracking-[3px] text-[#1f8f3e] mb-3">About WHS</p>
+          <h2 className="text-[clamp(26px,3vw,42px)] font-black text-[#061e35] leading-tight mb-5">
+            Sri Lanka's most trusted<br />
+            <span className="text-[#0b3d6b]">talent acquisition partner</span>
+          </h2>
+          <p className="text-[16px] text-gray-500 max-w-2xl mx-auto leading-relaxed font-light mb-12">
+            Founded in 2018, WHS was built on one belief — great talent and great companies
+            deserve to find each other without the noise. We personally manage every placement,
+            from first contact to first day on the job.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 max-w-3xl mx-auto">
+            {[
+              { num:'2018',   label:'Year Founded'          },
+              { num:'5,000+', label:'Professionals Placed'   },
+              { num:'300+',   label:'Partner Companies'      },
+              { num:'98%',    label:'Client Retention Rate'  },
+            ].map(m => (
+              <div key={m.label} className="bg-[#f4f8fb] rounded-2xl p-5 border border-[#e8f0f9]">
+                <p className="text-[26px] font-black text-[#0b3d6b] leading-none">{m.num}</p>
+                <p className="text-[12px] text-gray-500 mt-1">{m.label}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
       {/* ════════════════════════ TESTIMONIALS ═══════════════════════════════ */}
       <section className="py-28 px-6 lg:px-10 bg-[#061e35] relative overflow-hidden">
@@ -565,10 +706,17 @@ export default function Home() {
             WHS is here to make it happen.
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
-            <Link to="/signin"
-              className="px-8 py-4 rounded-xl bg-white text-[#0b3d6b] text-[15px] font-black hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] transition-all">
-              Join as a Candidate
-            </Link>
+            <button
+              onClick={handleCandidateRegistration}
+              disabled={isLoading}
+              className="px-8 py-4 rounded-xl bg-white text-[#0b3d6b] text-[15px] font-black hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3)] transition-all disabled:opacity-70 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <span className="inline-block w-5 h-5 border-2 border-[#0b3d6b] border-t-transparent rounded-full animate-spin" />
+              ) : (
+                'Join as a Candidate'
+              )}
+            </button>
             <a href="mailto:hire@workforcehs.com"
               className="px-8 py-4 rounded-xl border-2 border-white/40 text-white text-[15px] font-bold hover:bg-white/10 hover:border-white/70 transition-all">
               Contact Our Team →
